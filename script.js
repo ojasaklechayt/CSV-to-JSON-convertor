@@ -13,7 +13,7 @@ function parseCSV() {
 
 function createtable(csvData) {
     const rows = csvData.trim().split("\n");
-    const headerRow = rows[0].split(";");
+    const headerRow = rows[0].split(",");
     const numrows = rows.length;
     const numcols = headerRow.length;
     let rowtotal = 0;
@@ -35,7 +35,7 @@ function createtable(csvData) {
     tableHTML += "<tbody>";
     console.log(rows);
     for (let i = 1; i < numrows; i++) {
-        const cols = rows[i].split(";");
+        const cols = rows[i].split(",");
         console.log(cols);
         let rowSum = 0;
         tableHTML += "<tr>";
@@ -103,11 +103,11 @@ function exportCSV() {
     const table = document.querySelector("table");
     const rows = Array.from(table.querySelectorAll("tr"));
     const headerCells = Array.from(rows[0].querySelectorAll("th"));
-    const headerRow = headerCells.map(cell => cell.textContent).join(";");
+    const headerRow = headerCells.map(cell => cell.textContent).join(",");
     const dataCells = rows.slice(1).map(row =>
         Array.from(row.querySelectorAll("td")).map(td => td.textContent)
     );
-    const data = [headerRow, ...dataCells].join("\n");
+    const data = [headerRow, ...dataCells].join("");
     const dataUri = "data:text/csv;charset=utf-8," + encodeURIComponent(data);
     const exportLink = document.createElement("a");
     exportLink.href = dataUri;
