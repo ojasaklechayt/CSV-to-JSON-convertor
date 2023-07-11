@@ -111,23 +111,22 @@ function createtable(csvData) {
     }
 
     function updateTotal() {
-        let total = 0;
         const rows = document.querySelectorAll("tbody tr");
-        rows.forEach(row => {
+        rows.forEach((row, index) => {
             const cells = row.querySelectorAll("td");
             let rowSum = 0;
-            for (let i = 1; i < cells.length; i++) {
+            for (let i = 1; i < cells.length - 1; i++) { // Exclude the last cell in the row
                 const cellValue = cells[i].textContent.trim();
                 if (!isNaN(cellValue) && cellValue !== "") {
                     rowSum += parseInt(cellValue, 10);
                 }
             }
             cells[cells.length - 1].textContent = rowSum.toFixed(2);
-            total += rowSum;
         });
-        const totalCell = document.querySelector("thead th:last-child");
-        totalCell.textContent = total.toFixed(2);
     }
+
+    const updateTotalBtn = document.getElementById("update-total-btn");
+    updateTotalBtn.addEventListener("click", updateTotal);
 
     return tableHTML;
 }
