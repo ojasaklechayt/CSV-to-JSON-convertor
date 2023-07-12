@@ -1,3 +1,11 @@
+const fileInput = document.getElementById('csv');
+const fileLabel = document.querySelector('.custom-file-label');
+
+fileInput.addEventListener('change', e => {
+    const fileName = e.target.files[0].name;
+    fileLabel.textContent = fileName;
+});
+
 function parseCSV() {
     const fileInput = document.getElementById("csv");
     const file = fileInput.files[0];
@@ -21,7 +29,7 @@ function createtable(csvData) {
 
     headerRow.unshift("Serial Number");
 
-    let tableHTML = "<table class='table'>";
+    let tableHTML = "<table class='table' id='mytable'>";
     tableHTML += "<thead><tr>";
     for (let i = 0; i < numcols + 2; i++) {
         if (i === numcols + 1) {
@@ -41,11 +49,6 @@ function createtable(csvData) {
         tableHTML += "<tr>";
         tableHTML += `<td contentEditable>${i}</td>`;
         for (let j = 0; j < numcols; j++) {
-            const cellValue = cols[j];
-            if (isNaN(cellValue) && cellValue !== "") {
-                containsAlphabets = true;
-                window.alert("Presence of string value");
-            }
             tableHTML += `<td contentEditable>${cols[j]}</td>`;
             rowSum += parseInt(cols[j], 10);
         }
@@ -60,7 +63,6 @@ function createtable(csvData) {
     const tablecontainer = document.getElementById("showtable");
     tablecontainer.innerHTML = tableHTML;
 
-    // Add mx-auto class to center the table horizontally
     const table = tablecontainer.querySelector("table");
     table.classList.add("mx-auto");
 
@@ -79,7 +81,6 @@ function createtable(csvData) {
         let sum = 0;
         const tableBody = document.querySelector("tbody");
         const numRows = tableBody.querySelectorAll("tr").length;
-
         const newRow = document.createElement("tr");
         const newSerialNumberCell = document.createElement("td");
         newSerialNumberCell.setAttribute("contentEditable", "true");
@@ -115,13 +116,19 @@ function createtable(csvData) {
         rows.forEach((row, index) => {
             const cells = row.querySelectorAll("td");
             let rowSum = 0;
-            for (let i = 1; i < cells.length - 1; i++) { // Exclude the last cell in the row
+            let containsAlphabets = false;
+            for (let i = 1; i < cells.length - 1; i++) {
                 const cellValue = cells[i].textContent.trim();
                 if (!isNaN(cellValue) && cellValue !== "") {
                     rowSum += parseInt(cellValue, 10);
+                } else {
+                    containsAlphabets = true;
                 }
             }
             cells[cells.length - 1].textContent = rowSum.toFixed(2);
+            if (containsAlphabets) {
+                alert("Non-numeric values in the Cell");
+            }
         });
     }
 
