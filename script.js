@@ -78,36 +78,61 @@ function createtable(csvData) {
     });
 
     function addRow() {
-        let sum = 0;
         const tableBody = document.querySelector("tbody");
         const numRows = tableBody.querySelectorAll("tr").length;
+        const index = parseInt(document.getElementById("custom-number-input").value) - 1;
+        if (index > numRows - 1) {
+            alert("Invalid index");
+            return;
+        }
         const newRow = document.createElement("tr");
         const newSerialNumberCell = document.createElement("td");
         newSerialNumberCell.setAttribute("contentEditable", "true");
-        newSerialNumberCell.textContent = numRows + 1;
+        newSerialNumberCell.textContent = index + 1;
         newRow.appendChild(newSerialNumberCell);
-
+    
         for (let i = 0; i < numcols; i++) {
             const newCell = document.createElement("td");
             newCell.setAttribute("contentEditable", "true");
             newCell.textContent = "1";
-            sum += parseInt(newCell.textContent);
             newRow.appendChild(newCell);
         }
         const newTotalCell = document.createElement("td");
-        newTotalCell.textContent = sum;
+        newTotalCell.textContent = "0";
         newRow.appendChild(newTotalCell);
-
-        tableBody.appendChild(newRow);
+    
+        if (index === numRows - 1) {
+            tableBody.appendChild(newRow);
+        } else {
+            const refNode = tableBody.querySelectorAll("tr")[index + 1];
+            tableBody.insertBefore(newRow, refNode);
+            for (let i = index + 1; i < numRows + 1; i++) {
+                const serialNumberCell = tableBody.querySelectorAll("tr")[i].querySelectorAll("td")[0];
+                serialNumberCell.textContent = i + 1;
+            }
+        }
         updateTotal();
     }
 
     function deleteRow() {
         const tableBody = document.querySelector("tbody");
         const numRows = tableBody.querySelectorAll("tr").length;
-        if (numRows > 0) {
-            tableBody.removeChild(tableBody.lastChild);
+    
+        const index = parseInt(document.getElementById("custom-number-input-two").value) - 1;
+    
+        if (isNaN(index) || index < 0 || index >= numRows) {
+            alert("Invalid index");
+            return;
         }
+    
+        const rowToRemove = tableBody.querySelectorAll("tr")[index];
+        tableBody.removeChild(rowToRemove);
+    
+        for (let i = index; i < numRows - 1; i++) {
+            const serialNumberCell = tableBody.querySelectorAll("tr")[i].querySelectorAll("td")[0];
+            serialNumberCell.textContent = i + 1;
+        }
+    
         updateTotal();
     }
 
