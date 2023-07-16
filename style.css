@@ -1,3 +1,7 @@
 td.non-numeric {
-    border: 2px solid red;
+    background-color: #ffcccc;
+}
+
+tr.non-numeric-row {
+    background-color: #ff9999;
 }
