@@ -32,7 +32,9 @@ function createtable(csvData) {
     let tableHTML = "<table class='table' id='mytable'>";
     tableHTML += "<thead><tr>";
     for (let i = 0; i < numcols + 2; i++) {
-        if (i === numcols + 1) {
+        if (i === 0) {
+            tableHTML += `<th>${headerRow[i]}</th>`;
+        } else if (i === numcols + 1) {
             tableHTML += `<th>Total</th>`;
         } else {
             tableHTML += `<th>${headerRow[i]}</th>`;
@@ -50,7 +52,7 @@ function createtable(csvData) {
         tableHTML += `<td contentEditable>${i}</td>`;
         for (let j = 0; j < numcols; j++) {
             tableHTML += `<td contentEditable>${cols[j]}</td>`;
-            rowSum += parseInt(cols[j], 10);
+            rowSum += parseFloat(cols[j]);
         }
         tableHTML += `<td>${rowSum.toFixed(2)}</td>`;
         rowtotal += rowSum;
@@ -81,7 +83,7 @@ function createtable(csvData) {
         const tableBody = document.querySelector("tbody");
         const numRows = tableBody.querySelectorAll("tr").length;
         const index = parseInt(document.getElementById("custom-number-input").value) - 1;
-        if (index > numRows - 1) {
+        if (index > numRows - 1 || index < 0) {
             alert("Invalid index");
             return;
         }
@@ -90,7 +92,7 @@ function createtable(csvData) {
         newSerialNumberCell.setAttribute("contentEditable", "true");
         newSerialNumberCell.textContent = index + 1;
         newRow.appendChild(newSerialNumberCell);
-    
+
         for (let i = 0; i < numcols; i++) {
             const newCell = document.createElement("td");
             newCell.setAttribute("contentEditable", "true");
@@ -100,7 +102,7 @@ function createtable(csvData) {
         const newTotalCell = document.createElement("td");
         newTotalCell.textContent = "0";
         newRow.appendChild(newTotalCell);
-    
+
         if (index === numRows - 1) {
             tableBody.appendChild(newRow);
         } else {
@@ -117,22 +119,22 @@ function createtable(csvData) {
     function deleteRow() {
         const tableBody = document.querySelector("tbody");
         const numRows = tableBody.querySelectorAll("tr").length;
-    
+
         const index = parseInt(document.getElementById("custom-number-input-two").value) - 1;
-    
+
         if (isNaN(index) || index < 0 || index >= numRows) {
             alert("Invalid index");
             return;
         }
-    
+
         const rowToRemove = tableBody.querySelectorAll("tr")[index];
         tableBody.removeChild(rowToRemove);
-    
+
         for (let i = index; i < numRows - 1; i++) {
             const serialNumberCell = tableBody.querySelectorAll("tr")[i].querySelectorAll("td")[0];
             serialNumberCell.textContent = i + 1;
         }
-    
+
         updateTotal();
     }
 
@@ -145,9 +147,13 @@ function createtable(csvData) {
             for (let i = 1; i < cells.length - 1; i++) {
                 const cellValue = cells[i].textContent.trim();
                 if (!isNaN(cellValue) && cellValue !== "") {
-                    rowSum += parseInt(cellValue, 10);
+                    rowSum += parseFloat(cellValue);
                 } else {
                     containsAlphabets = true;
+                    cells[i].classList.add("non-numeric");
+                    cells[i].onfocus = function () {
+                        this.classList.remove("non-numeric");
+                    };
                 }
             }
             cells[cells.length - 1].textContent = rowSum.toFixed(2);
